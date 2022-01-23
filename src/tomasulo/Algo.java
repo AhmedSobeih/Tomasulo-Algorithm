@@ -2,21 +2,33 @@
 //The main class that runs the simulation
 
 package tomasulo;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.Scanner;
 import java.util.*;
 
 public class Algo {
-static int addLatency=2;
-static int multLatency=10;
-static int divideLatency=40;
+//static int addLatency=2;
+//static int multLatency=10;
+//static int divideLatency=40;
+static Vector <ReservationStation>ReservationStationsToBeStored=new Vector<>();
+static Vector <Vector<Integer>>RegisterFilesToBeStored=new Vector<>();
+static Vector <Vector<String>>RATsToBeStored=new Vector<>();
 static int []memory=new int[1000000];
-static Vector <Vector<String>>RATsToBeStored=new Vector<Vector<String>>(100);
-    public static void main(String[] args) {
-        Vector <ReservationStation>ReservationStationsToBeStored=new Vector<>();
-        Vector <Vector<Integer>>RegisterFilesToBeStored=new Vector<>();
 
+    public static void main(String[] args) throws IOException {
+        String inputFile = "cliTomasulo.txt";
+        BufferedReader br = new BufferedReader(new FileReader(inputFile));
+        String line = null;
+        Vector<String> inputInstructions = new Vector<>();
+        while ((line = br.readLine()) != null)
+        {
+            inputInstructions.add(line);
+        }
+        runAlgorithm(inputInstructions,2,10,40);
+    }
+
+    public static void runAlgorithm(Vector<String> inputInstructions, int addLatency,int multLatency, int divideLatency)
+    {
         memory[0]=3;
         memory[1]=4;
         memory[2]=6;
@@ -25,9 +37,6 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<Vector<String>>(100);
         memory[5]=4;
         memory[6]=9;
         memory[7]=0;
-
-
-
 
         Printing print = new Printing();
         //This holds the tags or pointers to the RegisterFile(RAT Table)
@@ -56,39 +65,41 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<Vector<String>>(100);
 
 
         //This is a Try-Catch block that handles the file not found exception
-        try {
-            Scanner scanner = new Scanner(new File(inputFile));
-            numberOfInstructions = scanner.nextInt();
-            //Here we give RstoInstructionMatcher a unique value to match rs with instructions
-            for(int i = 0; i < numberOfInstructions; i++){
-                RstoInstructionMatcher = i+1;
-                opCode = scanner.nextInt();
-                sourceOp1 = scanner.nextInt();
-                if(opCode==4||opCode==5){
-                    sourceOp2=sourceOp1;
-                }
-                else {
-                    sourceOp2 = scanner.nextInt();
-                }
-                destOp = scanner.nextInt();
-                instructions.add(new Instruction(opCode, destOp, sourceOp1, sourceOp2, RstoInstructionMatcher));
+        //            Scanner scanner = new Scanner(new File(inputFile));
+        numberOfInstructions = inputInstructions.size();
+        //Here we give RstoInstructionMatcher a unique value to match rs with instructions
+        for(int i = 0; i < numberOfInstructions; i++){
+            RstoInstructionMatcher = i+1;
+            String[] splited = inputInstructions.get(i).split(" ");
+            System.out.println(inputInstructions.get(i));
+            System.out.println(Arrays.toString(splited));
+            opCode = Integer.parseInt(splited[0]);
+            sourceOp1 =Integer.parseInt(splited[1]);
+            if(opCode==4||opCode==5){
+                sourceOp2=sourceOp1;
             }
-            //Making the resitser Table
-            for(int j = 0; j < 8; j++){
-                RegisterFile.add(j,0) ;
+            else {
+                sourceOp2 = Integer.parseInt(splited[2]);
             }
-            //making the RAT Table
-            for(int k = 0; k < 8; k++){
-                RAT.add(k,"R" + k) ;
-               
+            if(opCode==4||opCode==5)
+            {
+                destOp=Integer.parseInt(splited[2]);
             }
-        }
-        catch(FileNotFoundException ex) {
-            System.out.println(
-                    "Unable to open file '" +
-                            inputFile + "'");
-        }
+            else{
+                destOp = Integer.parseInt(splited[3]);
 
+            }
+            instructions.add(new Instruction(opCode, destOp, sourceOp1, sourceOp2, RstoInstructionMatcher));
+        }
+        //Making the resitser Table
+        for(int j = 0; j < 8; j++){
+            RegisterFile.add(j,0) ;
+        }
+        //making the RAT Table
+        for(int k = 0; k < 8; k++){
+            RAT.add(k,"R" + k) ;
+
+        }
 
 
         //Printing the initial RAT, RegisterFile, and INSTRUCTION QUEUE
@@ -417,7 +428,7 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<Vector<String>>(100);
 
 
         //---------------RS/RAT/RegisterFile Updating Algorithm------------------//
-        //Declarations for RS/RAT/RegisterFile 
+        //Declarations for RS/RAT/RegisterFile
 
         //Update the RS, RAT, and RegisterFile for each instruction until the number of cycles in the text file
         ReservationStation rs1 = new ReservationStation("0", "   ", "  ", "  ", "   ", "   ", " ", 0);
@@ -430,7 +441,7 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<Vector<String>>(100);
         LoadBuffer l3=new LoadBuffer(0,0);
         LoadBuffer l4=new LoadBuffer(0,0);
         LoadBuffer l5=new LoadBuffer(0,0);
-       StoreBuffer s1=new StoreBuffer(0,0,"   ","   ");
+        StoreBuffer s1=new StoreBuffer(0,0,"   ","   ");
         StoreBuffer s2=new StoreBuffer(0,0,"   ","   ");
         StoreBuffer s3=new StoreBuffer(0,0,"   ","   ");
         StoreBuffer s4=new StoreBuffer(0,0,"   ","   ");
@@ -477,7 +488,7 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<Vector<String>>(100);
             instrIndexE = -1;
             instrIndexW = -1;
 
-            //Loops through isCycle Cycle array to see if 'i' is stored in there 
+            //Loops through isCycle Cycle array to see if 'i' is stored in there
             for(int j = 0; j < numberOfInstructions; j++){
                 if(isCycle[j] == i){
                     instrIndexI = j;
@@ -486,7 +497,7 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<Vector<String>>(100);
                 }
             }
 
-            //Loops through Execution Cycle array to see if 'i' is stored in there 
+            //Loops through Execution Cycle array to see if 'i' is stored in there
             for(int j = 0; j < numberOfInstructions; j++){
                 if(exCycle[j] == i){
                     instrIndexE = j;
@@ -509,7 +520,7 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<Vector<String>>(100);
 
             //Checks for empty cycles (uncomment if you want to see empty cycles
 //            if(activeCycle != 1){
-//                System.out.println("Cycle " + i + " was empty"); 
+//                System.out.println("Cycle " + i + " was empty");
 //            }
 
             //Clears Reservations stations depending on the value of rsClear
@@ -619,7 +630,7 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<Vector<String>>(100);
                     s5.setVj("  ");
                     s5.setQj("  ");
                     break;
-                    default:
+                default:
                     break;
             }
 
@@ -753,7 +764,7 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<Vector<String>>(100);
                             }
                         }
                     }*/
-                    
+
 
                   /*  if(rs1.getRstoInstructionMatcher() == instructions.get(instrIndexW).getRstoInstructionMatcher()){
                         currentRS = "RS1";
@@ -1508,12 +1519,16 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<Vector<String>>(100);
                     }
                 }
             }
-
-            ReservationStationsToBeStored.add(rs1);
-            ReservationStationsToBeStored.add(rs2);
-            ReservationStationsToBeStored.add(rs3);
-            ReservationStationsToBeStored.add(rs4);
-            ReservationStationsToBeStored.add(rs5);
+            ReservationStation newRs1 = new ReservationStation(rs1.getBusy(),rs1.getOp(),rs1.getVj(),rs1.getVk(),rs1.Qj,rs1.Qk,rs1.getDisp(),rs1.getRstoInstructionMatcher());
+            ReservationStation newRs2 = new ReservationStation(rs2.getBusy(),rs2.getOp(),rs2.getVj(),rs2.getVk(),rs2.Qj,rs2.Qk,rs1.getDisp(),rs2.getRstoInstructionMatcher());
+            ReservationStation newRs3 = new ReservationStation(rs3.getBusy(),rs3.getOp(),rs3.getVj(),rs3.getVk(),rs3.Qj,rs3.Qk,rs1.getDisp(),rs3.getRstoInstructionMatcher());
+            ReservationStation newRs4 = new ReservationStation(rs4.getBusy(),rs4.getOp(),rs4.getVj(),rs4.getVk(),rs4.Qj,rs4.Qk,rs1.getDisp(),rs4.getRstoInstructionMatcher());
+            ReservationStation newRs5 = new ReservationStation(rs5.getBusy(),rs5.getOp(),rs5.getVj(),rs5.getVk(),rs5.Qj,rs5.Qk,rs1.getDisp(),rs5.getRstoInstructionMatcher());
+            ReservationStationsToBeStored.add(newRs1);
+            ReservationStationsToBeStored.add(newRs2);
+            ReservationStationsToBeStored.add(newRs3);
+            ReservationStationsToBeStored.add(newRs4);
+            ReservationStationsToBeStored.add(newRs5);
             RegisterFilesToBeStored.add(RegisterFile);
             Object newRAT=RAT.clone();
             RATsToBeStored.add((Vector)newRAT);

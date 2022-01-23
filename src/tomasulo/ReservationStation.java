@@ -1,8 +1,8 @@
 package tomasulo;
 public class
-ReservationStation {
+ReservationStation extends Object{
 
-    String Op, Qj, Qk, Vj, Vk, Busy, Disp;
+    public String Op, Qj, Qk, Vj, Vk, Busy, Disp;
     int RstoInstructionMatcher;
 
     public ReservationStation(){}

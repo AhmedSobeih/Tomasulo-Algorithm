@@ -8,8 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Vector;
 
 public class GUI implements ActionListener {
@@ -19,11 +18,26 @@ public class GUI implements ActionListener {
     JFrame frame;
     JButton goCycle = new JButton("Go to cycle");
     JButton next = new JButton("Next Cycle");
+    JButton prev = new JButton("Previous Cycle");
+
     JButton newInstruction = new JButton("+ Add instruction");
+
+    JTextField addLatencyText = new JTextField(20);
+    JTextField subLatencyText = new JTextField(20);
+    JTextField mulLatencyText = new JTextField(20);
+    JTextField divLatencyText = new JTextField(20);
+    JTextField loadLatencyText = new JTextField(20);
+    JTextField storeLatencyText = new JTextField(20);
+
+
+
 
     JTextField gotoCycleField = new JTextField(20);
 
     Table instructionQueue;
+    Table RAT;
+    Table addStation;
+    Table mulStations;
 
     Vector<String> instructions = new Vector<>();
     ImagePanel panel;
@@ -48,7 +62,6 @@ public class GUI implements ActionListener {
         JLabel addLatency = new JLabel("Add latency");
         addLatency.setBounds(580,50,100,25);
         panel.add(addLatency);
-        JTextField addLatencyText = new JTextField(20);
         addLatencyText.setBounds(650,50,50,25);
         panel.add(addLatencyText);
 
@@ -56,7 +69,6 @@ public class GUI implements ActionListener {
         JLabel mulLatency = new JLabel("Multiply latency");
         mulLatency.setBounds(880,50,100,25);
         panel.add(mulLatency);
-        JTextField mulLatencyText = new JTextField(20);
         mulLatencyText.setBounds(970,50,50,25);
         panel.add(mulLatencyText);
 
@@ -64,7 +76,6 @@ public class GUI implements ActionListener {
         JLabel subLatency = new JLabel("Sub latency");
         subLatency.setBounds(580,100,100,25);
         panel.add(subLatency);
-        JTextField subLatencyText = new JTextField(20);
         subLatencyText.setBounds(650,100,50,25);
         panel.add(subLatencyText);
 
@@ -72,7 +83,6 @@ public class GUI implements ActionListener {
         JLabel divLatency = new JLabel("Divide latency");
         divLatency.setBounds(880,100,100,25);
         panel.add(divLatency);
-        JTextField divLatencyText = new JTextField(20);
         divLatencyText.setBounds(970,100,50,25);
         panel.add(divLatencyText);
 
@@ -80,7 +90,6 @@ public class GUI implements ActionListener {
         JLabel loadLatency = new JLabel("Load latency");
         loadLatency.setBounds(575,150,100,25);
         panel.add(loadLatency);
-        JTextField loadLatencyText = new JTextField(20);
         loadLatencyText.setBounds(650,150,50,25);
         panel.add(loadLatencyText);
 
@@ -88,7 +97,6 @@ public class GUI implements ActionListener {
         JLabel storeLatency = new JLabel("Store latency");
         storeLatency.setBounds(880,150,100,25);
         panel.add(storeLatency);
-        JTextField storeLatencyText = new JTextField(20);
         storeLatencyText.setBounds(970,150,50,25);
         panel.add(storeLatencyText);
 
@@ -98,6 +106,11 @@ public class GUI implements ActionListener {
         next.addActionListener(this);
 
         panel.add(next);
+
+        prev.setBounds(600,320,200,25);
+        prev.addActionListener(this);
+
+        panel.add(prev);
 
         //go to cycle button
         goCycle.setBounds(850,290,200,25);
@@ -142,6 +155,10 @@ public class GUI implements ActionListener {
 
        drawRegFile();
 
+        String[] RATColumnNames = {"Content"};
+        int[]RATBounds = {1350,0,100,1000};
+        RAT = drawTable(RATColumnNames,32,RATBounds,"F");
+        RAT.table.setRowHeight(23);
         cycles.setBounds(550,550,200,200);
         cycles.setFont(new Font("Serif", Font.BOLD, 34));
         panel.add(cycles);
@@ -164,12 +181,12 @@ public class GUI implements ActionListener {
         //drawing add stations
         String[] addStationColumnNames = {"Station","Busy","Op","Vj","Vk","Qj","Qk"};
         int[] addStationBounds = {50,600,350,120};
-        drawTable(addStationColumnNames,3,addStationBounds,"A");
+        addStation = drawTable(addStationColumnNames,3,addStationBounds,"A");
 
         //drawing mul stations
         String[] mulStationColumnNames = {"Station","Busy","Op","Vj","Vk","Qj","Qk"};
         int[] mulStationBounds = {800,600,350,90};
-        drawTable(mulStationColumnNames,2,mulStationBounds, "M");
+        mulStations = drawTable(mulStationColumnNames,2,mulStationBounds, "M");
         frame.setVisible(true);
 
 
@@ -297,14 +314,53 @@ public class GUI implements ActionListener {
         }
         else if(e.getSource()==next)
         {
+//            getInstructions();
+            if(cycle==0)
+            {
+                String inputFile = "cliTomasulo.txt";
+                BufferedReader br = null;
+                try {
+                    br = new BufferedReader(new FileReader(inputFile));
+                } catch (FileNotFoundException fileNotFoundException) {
+                    fileNotFoundException.printStackTrace();
+                }
+                String line = null;
+                Vector<String> inputInstructions = new Vector<>();
+                while (true)
+                {
+                    try {
+                        if (!((line = br.readLine()) != null)) break;
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
+                    inputInstructions.add(line);
+                }
+                Algo.runAlgorithm(inputInstructions,Integer.parseInt(addLatencyText.getText().toString()),Integer.parseInt(mulLatencyText.getText().toString()),Integer.parseInt(divLatencyText.getText().toString()));
+            }
+            setRAT();
+            setAddRS();
+            setMulRS();
             cycles.setText("Cycle: " + ++cycle);
-            getInstructions();
+
+        }
+        else if(e.getSource()==prev)
+        {
+//            getInstructions();
+
+            setRAT();
+            setAddRS();
+            setMulRS();
+            cycles.setText("Cycle: " + --cycle);
+
         }
         else if(e.getSource()==goCycle)
         {
             try {
                 cycle=Integer.parseInt(gotoCycleField.getText());
                 cycles.setText("Cycle: " + cycle);
+                setRAT();
+                setAddRS();
+                setMulRS();
             }
             catch(Exception ex)
             {
@@ -313,6 +369,43 @@ public class GUI implements ActionListener {
 
 
 
+        }
+    }
+    public void setAddRS()
+    {
+        Vector <ReservationStation> ReservationStationsToBeStored=Algo.ReservationStationsToBeStored;
+        for(int i=0; i<3  /*RAT.getModel().getRowCount()*/; i++)
+        {
+            addStation.getModel().setValueAt(ReservationStationsToBeStored.get(cycle*5+i).Busy,i,1);
+            addStation.getModel().setValueAt(ReservationStationsToBeStored.get(cycle*5+i).Op,i,2);
+            addStation.getModel().setValueAt(ReservationStationsToBeStored.get(cycle*5+i).Vj,i,3);
+            addStation.getModel().setValueAt(ReservationStationsToBeStored.get(cycle*5+i).Vk,i,4);
+            addStation.getModel().setValueAt(ReservationStationsToBeStored.get(cycle*5+i).Qj,i,5);
+            addStation.getModel().setValueAt(ReservationStationsToBeStored.get(cycle*5+i).Qk,i,6);
+
+        }
+    }
+    public void setMulRS()
+    {
+        Vector <ReservationStation> ReservationStationsToBeStored=Algo.ReservationStationsToBeStored;
+        for(int i=0; i<2  /*RAT.getModel().getRowCount()*/; i++)
+        {
+            System.out.println("HHH"+ ReservationStationsToBeStored.get(cycle*5+3+i).Busy);
+            mulStations.getModel().setValueAt(ReservationStationsToBeStored.get(cycle*5+3+i).Busy,i,1);
+            mulStations.getModel().setValueAt(ReservationStationsToBeStored.get(cycle*5+3+i).Op,i,2);
+            mulStations.getModel().setValueAt(ReservationStationsToBeStored.get(cycle*5+3+i).Vj,i,3);
+            mulStations.getModel().setValueAt(ReservationStationsToBeStored.get(cycle*5+3+i).Vk,i,4);
+            mulStations.getModel().setValueAt(ReservationStationsToBeStored.get(cycle*5+3+i).Qj,i,5);
+            mulStations.getModel().setValueAt(ReservationStationsToBeStored.get(cycle*5+3+i).Qk,i,6);
+        }
+    }
+    public void setRAT()
+    {
+        Vector <Vector<String>>RATsToBeStored=Algo.RATsToBeStored;
+        for(int i=0; i<8  /*RAT.getModel().getRowCount()*/; i++)
+        {
+            System.out.println(RATsToBeStored.get(cycle));
+            RAT.getModel().setValueAt(RATsToBeStored.get(cycle).get(i),i,0);
         }
     }
 }
