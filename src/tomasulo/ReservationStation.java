@@ -1,5 +1,6 @@
 package tomasulo;
-public class ReservationStation {
+public class
+ReservationStation {
 
     String Op, Qj, Qk, Vj, Vk, Busy, Disp;
     int RstoInstructionMatcher;
