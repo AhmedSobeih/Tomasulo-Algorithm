@@ -39,6 +39,18 @@ public class Printing {
                     System.out.print((dispatch[i]) + "              ");// Print Dispatch
                     System.out.println(write[i]);//Print Broadcast
                     break;
+                case 4:
+                    System.out.print("Load R" + aq.get(i).getDestOp()+"," + aq.get(i).getSourceOp1()+ "            ");
+                    System.out.print(isCycle[i] + "            ");//Print isCycle
+                    System.out.print((dispatch[i]) + "              ");// Print Dispatch
+                    System.out.println(write[i]);//Print Broadcast
+                    break;
+                    case 5:
+                    System.out.print("Store  " + aq.get(i).getDestOp()+ ", R" + aq.get(i).getSourceOp1()+ "                 ");
+                    System.out.print(isCycle[i] + "            ");//Print isCycle
+                    System.out.print((dispatch[i]) + "              ");// Print Dispatch
+                    System.out.println(write[i]);//Print Broadcast
+                    break;
                 default:
                     break;
             }
@@ -140,28 +152,7 @@ public class Printing {
     }
 
     //Functions to print off the queue
-    public void printInstructionQueue(ArrayQueue<Instruction> aq, int numInstr){
-        System.out.println("Instruction Queue");
-        for(int i = 0; i < numInstr; i++){
-            switch (aq.get(i).getOpCode()) {
-                case 0:
-                    System.out.println("Add R" + aq.get(i).getDestOp()+ ", R" + aq.get(i).getSourceOp1()+ ", R" + aq.get(i).getSourceOp2());
-                    break;
-                case 1:
-                    System.out.println("Sub R" + aq.get(i).getDestOp()+ ", R" + aq.get(i).getSourceOp1()+ ", R" + aq.get(i).getSourceOp2());
-                    break;
-                case 2:
-                    System.out.println("Mul R" + aq.get(i).getDestOp()+ ", R" + aq.get(i).getSourceOp1()+ ", R" + aq.get(i).getSourceOp2());
-                    break;
-                case 3:
-                    System.out.println("Div R" + aq.get(i).getDestOp()+ ", R" + aq.get(i).getSourceOp1()+ ", R" + aq.get(i).getSourceOp2());
-                    break;
-                default:
-                    break;
-            }
-        }
-        System.out.println();
-    }
+
 
 
 
