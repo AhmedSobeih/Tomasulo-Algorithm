@@ -13,6 +13,16 @@ public class Algo {
 static Vector <ReservationStation>ReservationStationsToBeStored=new Vector<>();
 static Vector <Vector<Integer>>RegisterFilesToBeStored=new Vector<>();
 static Vector <Vector<String>>RATsToBeStored=new Vector<>();
+    static   LoadBuffer l1=new LoadBuffer(0,0);
+    static  LoadBuffer l2=new LoadBuffer(0,0);
+    static  LoadBuffer l3=new LoadBuffer(0,0);
+    static  LoadBuffer l4=new LoadBuffer(0,0);
+    static  LoadBuffer l5=new LoadBuffer(0,0);
+    static  StoreBuffer s1=new StoreBuffer(0,0,"   ","   ");
+    static  StoreBuffer s2=new StoreBuffer(0,0,"   ","   ");
+    static  StoreBuffer s3=new StoreBuffer(0,0,"   ","   ");
+    static  StoreBuffer s4=new StoreBuffer(0,0,"   ","   ");
+    static  StoreBuffer s5=new StoreBuffer(0,0,"   ","   ");
 static int []memory=new int[1000000];
 
     public static void main(String[] args) throws IOException {
@@ -439,16 +449,7 @@ static int []memory=new int[1000000];
         ReservationStation rs3 = new ReservationStation("0", "   ", "  ", "  ", "   ", "   ", " ", 0);
         ReservationStation rs4 = new ReservationStation("0", "   ", "  ", "  ", "   ", "   ", " ", 0);
         ReservationStation rs5 = new ReservationStation("0", "   ", "  ", "  ", "   ", "   ", " ", 0);
-        LoadBuffer l1=new LoadBuffer(0,0);
-        LoadBuffer l2=new LoadBuffer(0,0);
-        LoadBuffer l3=new LoadBuffer(0,0);
-        LoadBuffer l4=new LoadBuffer(0,0);
-        LoadBuffer l5=new LoadBuffer(0,0);
-        StoreBuffer s1=new StoreBuffer(0,0,"   ","   ");
-        StoreBuffer s2=new StoreBuffer(0,0,"   ","   ");
-        StoreBuffer s3=new StoreBuffer(0,0,"   ","   ");
-        StoreBuffer s4=new StoreBuffer(0,0,"   ","   ");
-        StoreBuffer s5=new StoreBuffer(0,0,"   ","   ");
+
 
         int rsClear = 0;
         int instrIndexI = 0;
@@ -1531,7 +1532,8 @@ static int []memory=new int[1000000];
             ReservationStationsToBeStored.add(newRs3);
             ReservationStationsToBeStored.add(newRs4);
             ReservationStationsToBeStored.add(newRs5);
-            RegisterFilesToBeStored.add(RegisterFile);
+            Object newRegisterFile = RegisterFile.clone();
+            RegisterFilesToBeStored.add((Vector)newRegisterFile);
             Object newRAT=RAT.clone();
             System.out.println(newRAT);
             RATsToBeStored.add((Vector)newRAT);
@@ -1540,6 +1542,7 @@ static int []memory=new int[1000000];
 
         }
         //printing functions that display the RegisterFile, RAT, and Reservation Stations for each cycle
+
 
         System.out.println(memory[23]);
     }

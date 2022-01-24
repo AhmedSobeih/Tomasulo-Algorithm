@@ -38,6 +38,9 @@ public class GUI implements ActionListener {
     Table RAT;
     Table addStation;
     Table mulStations;
+    Table loadBuffer;
+    Table storeBuffer;
+    JTable RegisterFile;
 
     Vector<String> instructions = new Vector<>();
     ImagePanel panel;
@@ -153,7 +156,7 @@ public class GUI implements ActionListener {
         System.out.println(instructionQueue.getModel().getValueAt(0, 0));
 
 
-       drawRegFile();
+       RegisterFile = drawRegFile();
 
         String[] RATColumnNames = {"Content"};
         int[]RATBounds = {1350,0,100,1000};
@@ -169,13 +172,13 @@ public class GUI implements ActionListener {
                 "Address",
         };
         int[] loadBuffersBounds = {50,400,200,150};
-        drawTable(loadBuffersColumnNames,4,loadBuffersBounds, "L");
+        loadBuffer = drawTable(loadBuffersColumnNames,5,loadBuffersBounds, "L");
 
         String[] storeBuffersColumnNames = {"Station","Busy",
-                "Address",
+                "Address","Vj","Qj"
         };
-        int[] storeBuffersBounds = {950,400,200,150};
-        drawTable(storeBuffersColumnNames,4,storeBuffersBounds, "S");
+        int[] storeBuffersBounds = {850,400,300,150};
+        storeBuffer = drawTable(storeBuffersColumnNames,5,storeBuffersBounds, "S");
 
 
         //drawing add stations
@@ -340,6 +343,10 @@ public class GUI implements ActionListener {
             setRAT();
             setAddRS();
             setMulRS();
+            setRegisterFile();
+            setLoadBuffer();
+            setStoreBuffer();
+
             cycles.setText("Cycle: " + ++cycle);
 
         }
@@ -350,6 +357,9 @@ public class GUI implements ActionListener {
             setRAT();
             setAddRS();
             setMulRS();
+            setRegisterFile();
+            setLoadBuffer();
+            setStoreBuffer();
             cycles.setText("Cycle: " + --cycle);
 
         }
@@ -361,6 +371,8 @@ public class GUI implements ActionListener {
                 setRAT();
                 setAddRS();
                 setMulRS();
+                setLoadBuffer();
+                setStoreBuffer();
             }
             catch(Exception ex)
             {
@@ -390,7 +402,6 @@ public class GUI implements ActionListener {
         Vector <ReservationStation> ReservationStationsToBeStored=Algo.ReservationStationsToBeStored;
         for(int i=0; i<2  /*RAT.getModel().getRowCount()*/; i++)
         {
-            System.out.println("HHH"+ ReservationStationsToBeStored.get(cycle*5+3+i).Busy);
             mulStations.getModel().setValueAt(ReservationStationsToBeStored.get(cycle*5+3+i).Busy,i,1);
             mulStations.getModel().setValueAt(ReservationStationsToBeStored.get(cycle*5+3+i).Op,i,2);
             mulStations.getModel().setValueAt(ReservationStationsToBeStored.get(cycle*5+3+i).Vj,i,3);
@@ -402,10 +413,67 @@ public class GUI implements ActionListener {
     public void setRAT()
     {
         Vector <Vector<String>>RATsToBeStored=Algo.RATsToBeStored;
-        for(int i=0; i<8  /*RAT.getModel().getRowCount()*/; i++)
+        for(int i=0; i<32  /*RAT.getModel().getRowCount()*/; i++)
         {
-            System.out.println(RATsToBeStored.get(cycle));
             RAT.getModel().setValueAt(RATsToBeStored.get(cycle).get(i),i,0);
         }
+    }
+
+    public void setRegisterFile()
+    {
+        Vector <Vector<Integer>>RegisterFilesToBeStored=Algo.RegisterFilesToBeStored;
+        for(int i=1; i<33  /*RAT.getModel().getRowCount()*/; i++)
+        {
+            RegisterFile.getModel().setValueAt(RegisterFilesToBeStored.get(cycle).get(i-1),i,0);
+        }
+    }
+
+    public void setLoadBuffer()
+    {
+        LoadBuffer l1=Algo.l1;
+        LoadBuffer l2=Algo.l2;
+        LoadBuffer l3=Algo.l3;
+        LoadBuffer l4=Algo.l4;
+        LoadBuffer l5=Algo.l5;
+//        StoreBuffer s1=new StoreBuffer(0,0,"   ","   ");
+//        StoreBuffer s2=new StoreBuffer(0,0,"   ","   ");
+//        StoreBuffer s3=new StoreBuffer(0,0,"   ","   ");
+//        StoreBuffer s4=new StoreBuffer(0,0,"   ","   ");
+//        StoreBuffer s5=new StoreBuffer(0,0,"   ","   ");
+
+        loadBuffer.getModel().setValueAt(l1.busy,0,1);
+        loadBuffer.getModel().setValueAt(l1.busy,1,1);
+        loadBuffer.getModel().setValueAt(l1.busy,2,1);
+        loadBuffer.getModel().setValueAt(l1.busy,3,1);
+        loadBuffer.getModel().setValueAt(l1.busy,4,1);
+
+        loadBuffer.getModel().setValueAt(l1.address,0,2);
+        loadBuffer.getModel().setValueAt(l1.address,1,2);
+        loadBuffer.getModel().setValueAt(l1.address,2,2);
+        loadBuffer.getModel().setValueAt(l1.address,3,2);
+        loadBuffer.getModel().setValueAt(l1.address,4,2);
+
+    }
+    public void setStoreBuffer()
+    {
+
+        StoreBuffer s1=Algo.s1;
+        StoreBuffer s2=Algo.s2;
+        StoreBuffer s3=Algo.s3;
+        StoreBuffer s4=Algo.s4;
+        StoreBuffer s5=Algo.s5;
+
+        storeBuffer.getModel().setValueAt(s1.busy,0,1);
+        storeBuffer.getModel().setValueAt(s2.busy,1,1);
+        storeBuffer.getModel().setValueAt(s3.busy,2,1);
+        storeBuffer.getModel().setValueAt(s4.busy,3,1);
+        storeBuffer.getModel().setValueAt(s5.busy,4,1);
+
+        storeBuffer.getModel().setValueAt(s1.address,0,2);
+        storeBuffer.getModel().setValueAt(s2.address,1,2);
+        storeBuffer.getModel().setValueAt(s3.address,2,2);
+        storeBuffer.getModel().setValueAt(s4.address,3,2);
+        storeBuffer.getModel().setValueAt(s5.address,4,2);
+
     }
 }
