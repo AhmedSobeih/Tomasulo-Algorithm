@@ -13,17 +13,15 @@ public class Algo {
 static Vector <ReservationStation>ReservationStationsToBeStored=new Vector<>();
 static Vector <Vector<Integer>>RegisterFilesToBeStored=new Vector<>();
 static Vector <Vector<String>>RATsToBeStored=new Vector<>();
-    static   LoadBuffer l1=new LoadBuffer(0,0);
-    static  LoadBuffer l2=new LoadBuffer(0,0);
-    static  LoadBuffer l3=new LoadBuffer(0,0);
-    static  LoadBuffer l4=new LoadBuffer(0,0);
-    static  LoadBuffer l5=new LoadBuffer(0,0);
-    static  StoreBuffer s1=new StoreBuffer(0,0,"   ","   ");
-    static  StoreBuffer s2=new StoreBuffer(0,0,"   ","   ");
-    static  StoreBuffer s3=new StoreBuffer(0,0,"   ","   ");
-    static  StoreBuffer s4=new StoreBuffer(0,0,"   ","   ");
-    static  StoreBuffer s5=new StoreBuffer(0,0,"   ","   ");
-static int []memory=new int[1000000];
+
+    static Vector<LoadBuffer> loadBuffers = new Vector<>();
+    static Vector<StoreBuffer> storeBuffers = new Vector<>();
+
+    static int []memory=new int[1000];
+    static Vector<int[]> memoryVersions = new Vector<>();
+    static int[] isCycle;
+    static int[] exCycle;
+    static int[] writeCycle;
 
     public static void main(String[] args) throws IOException {
         String inputFile = "cliTomasulo.txt";
@@ -67,7 +65,16 @@ static int []memory=new int[1000000];
         //Variable linking RS to an instruction
         int RstoInstructionMatcher = 0;
 
-
+        LoadBuffer l1=new LoadBuffer(0,0);
+        LoadBuffer l2=new LoadBuffer(0,0);
+        LoadBuffer l3=new LoadBuffer(0,0);
+        LoadBuffer l4=new LoadBuffer(0,0);
+        LoadBuffer l5=new LoadBuffer(0,0);
+        StoreBuffer s1=new StoreBuffer(0,0,"   ","   ");
+        StoreBuffer s2=new StoreBuffer(0,0,"   ","   ");
+        StoreBuffer s3=new StoreBuffer(0,0,"   ","   ");
+        StoreBuffer s4=new StoreBuffer(0,0,"   ","   ");
+        StoreBuffer s5=new StoreBuffer(0,0,"   ","   ");
 
 
 
@@ -84,20 +91,22 @@ static int []memory=new int[1000000];
             //System.out.println(inputInstructions.get(i));
             //System.out.println(Arrays.toString(splited));
             opCode = Integer.parseInt(splited[0]);
-            sourceOp1 =Integer.parseInt(splited[1]);
-            if(opCode==4||opCode==5){
-                sourceOp2=sourceOp1;
+
+            if(opCode==4){
+                sourceOp2=Integer.parseInt(splited[2]);
             }
             else {
-                sourceOp2 = Integer.parseInt(splited[2]);
+                if(opCode!=5)
+                    sourceOp2 = Integer.parseInt(splited[3]);
             }
-            if(opCode==4||opCode==5)
+            if(opCode==5)
             {
                 destOp=Integer.parseInt(splited[2]);
+                sourceOp1 =Integer.parseInt(splited[1]);
             }
             else{
-                destOp = Integer.parseInt(splited[3]);
-
+                destOp = Integer.parseInt(splited[1]);
+                sourceOp1 =Integer.parseInt(splited[2]);
             }
             instructions.add(new Instruction(opCode, destOp, sourceOp1, sourceOp2, RstoInstructionMatcher));
         }
@@ -122,9 +131,9 @@ static int []memory=new int[1000000];
         //---------------------FINDING isCycle exCycle writeCycle CYCLES---------------------//
 
         //These arrays will hold the isCycle, Execution, and writeCycle cycles
-        int[] isCycle = new int[numberOfInstructions];
-        int[] exCycle = new int[numberOfInstructions];
-        int[] writeCycle = new int[numberOfInstructions];
+        isCycle = new int[numberOfInstructions];
+        exCycle = new int[numberOfInstructions];
+        writeCycle = new int[numberOfInstructions];
         //Initializing each of those arrays to be -1
         for(int k = 0; k < numberOfInstructions; k++){
             isCycle[k] = -1;
@@ -1532,6 +1541,28 @@ static int []memory=new int[1000000];
             ReservationStationsToBeStored.add(newRs3);
             ReservationStationsToBeStored.add(newRs4);
             ReservationStationsToBeStored.add(newRs5);
+            LoadBuffer newL1 = new LoadBuffer(l1.busy,l1.address);
+            LoadBuffer newL2 = new LoadBuffer(l2.busy,l2.address);
+            LoadBuffer newL3 = new LoadBuffer(l3.busy,l3.address);
+            LoadBuffer newL4 = new LoadBuffer(l4.busy,l4.address);
+            LoadBuffer newL5 = new LoadBuffer(l5.busy,l5.address);
+            loadBuffers.add(newL1);
+            loadBuffers.add(newL2);
+            loadBuffers.add(newL3);
+            loadBuffers.add(newL4);
+            loadBuffers.add(newL5);
+
+            StoreBuffer news1 = new StoreBuffer(s1.busy,s1.address, s1.vj, s1.qj);
+            StoreBuffer news2 = new StoreBuffer(s2.busy,s2.address, s2.vj, s2.qj);
+            StoreBuffer news3 = new StoreBuffer(s3.busy,s3.address, s3.vj, s3.qj);
+            StoreBuffer news4 = new StoreBuffer(s4.busy,s4.address, s4.vj, s4.qj);
+            StoreBuffer news5 = new StoreBuffer(s5.busy,s5.address, s5.vj, s5.qj);
+            storeBuffers.add(news1);
+            storeBuffers.add(news2);
+            storeBuffers.add(news3);
+            storeBuffers.add(news4);
+            storeBuffers.add(news5);
+
             Object newRegisterFile = RegisterFile.clone();
             RegisterFilesToBeStored.add((Vector)newRegisterFile);
             Object newRAT=RAT.clone();
@@ -1539,11 +1570,15 @@ static int []memory=new int[1000000];
             RATsToBeStored.add((Vector)newRAT);
             print.printRFRAT(RegisterFile, RAT);
             print.printRS(rs1, rs2, rs3, rs4, rs5);
+            Object newMemory = memory.clone();
+            memoryVersions.add((int[]) newMemory);
 
         }
         //printing functions that display the RegisterFile, RAT, and Reservation Stations for each cycle
 
-
+        System.out.println(loadBuffers);
+        System.out.println(storeBuffers);
         System.out.println(memory[23]);
+        System.out.println(RegisterFilesToBeStored);
     }
 }

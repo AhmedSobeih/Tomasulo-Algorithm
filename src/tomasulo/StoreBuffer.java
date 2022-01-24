@@ -44,4 +44,14 @@ public class StoreBuffer {
     public void setQj(String qj) {
         this.qj = qj;
     }
+
+    @Override
+    public String toString() {
+        return "StoreBuffer{" +
+                "busy=" + busy +
+                ", address=" + address +
+                ", vj='" + vj + '\'' +
+                ", qj='" + qj + '\'' +
+                '}';
+    }
 }

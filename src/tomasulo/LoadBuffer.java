@@ -26,5 +26,11 @@ public class LoadBuffer {
         this.address = address;
     }
 
-
+    @Override
+    public String toString() {
+        return "LoadBuffer{" +
+                "busy=" + busy +
+                ", address=" + address +
+                '}';
+    }
 }
