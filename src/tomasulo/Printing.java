@@ -65,7 +65,7 @@ public class Printing {
 
         System.out.println("   RF                   RAT");
         System.out.println("-----------------------------");
-        for(int i = 0; i < 8; i++){
+        for(int i = 0; i < 32; i++){
             int length = String.valueOf(RF.get(i)).length();
             if(length == 2){
                 System.out.println("R" + i + ":     " + RF.get(i) + "      |        " + RAT.get(i) + "");

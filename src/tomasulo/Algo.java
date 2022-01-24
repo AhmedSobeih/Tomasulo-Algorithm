@@ -24,10 +24,10 @@ static int []memory=new int[1000000];
         {
             inputInstructions.add(line);
         }
-        runAlgorithm(inputInstructions,2,10,40);
+        runAlgorithm(inputInstructions,2,10,40,3,2,2);
     }
 
-    public static void runAlgorithm(Vector<String> inputInstructions, int addLatency,int multLatency, int divideLatency)
+    public static void runAlgorithm(Vector<String> inputInstructions, int addLatency,int multLatency, int divideLatency,int subLatency,int loadLatency,int storeLatency)
     {
         memory[0]=3;
         memory[1]=4;
@@ -40,9 +40,9 @@ static int []memory=new int[1000000];
 
         Printing print = new Printing();
         //This holds the tags or pointers to the RegisterFile(RAT Table)
-        Vector<String> RAT = new Vector<String>(8);
+        Vector<String> RAT = new Vector<String>(32);
         //This array holds all the RegisterFile values
-        Vector<Integer> RegisterFile = new Vector<Integer>(8);
+        Vector<Integer> RegisterFile = new Vector<Integer>(32);
         //Instructions vector
         Vector<Instruction> instructions = new Vector<Instruction>(10);
         //Cli text file for user to input data
@@ -71,8 +71,8 @@ static int []memory=new int[1000000];
         for(int i = 0; i < numberOfInstructions; i++){
             RstoInstructionMatcher = i+1;
             String[] splited = inputInstructions.get(i).split(" ");
-            System.out.println(inputInstructions.get(i));
-            System.out.println(Arrays.toString(splited));
+            //System.out.println(inputInstructions.get(i));
+            //System.out.println(Arrays.toString(splited));
             opCode = Integer.parseInt(splited[0]);
             sourceOp1 =Integer.parseInt(splited[1]);
             if(opCode==4||opCode==5){
@@ -92,12 +92,12 @@ static int []memory=new int[1000000];
             instructions.add(new Instruction(opCode, destOp, sourceOp1, sourceOp2, RstoInstructionMatcher));
         }
         //Making the resitser Table
-        for(int j = 0; j < 8; j++){
+        for(int j = 0; j < 32; j++){
             RegisterFile.add(j,0) ;
         }
         //making the RAT Table
-        for(int k = 0; k < 8; k++){
-            RAT.add(k,"R" + k) ;
+        for(int k = 0; k < 32; k++){
+            RAT.add(k,"F" + k) ;
 
         }
 
@@ -364,7 +364,7 @@ static int []memory=new int[1000000];
             //-----------------Find writeCycle Cycle-------------------//
 
             // Adds the latencies to the isCycle cycle to give the writeCycle cycle for the current instruction
-            if((instructions.get(i).getOpCode() == 0) || (instructions.get(i).getOpCode() == 1)){
+            if(instructions.get(i).getOpCode() == 0 ){
                 writeCycle[i] = exCycle[i] + addLatency;
             }
             else if(instructions.get(i).getOpCode() == 2){
@@ -373,11 +373,14 @@ static int []memory=new int[1000000];
             else if(instructions.get(i).getOpCode() == 3){
                 writeCycle[i] = exCycle[i] + divideLatency;
             }
+            else if(instructions.get(i).getOpCode() == 1){
+                writeCycle[i] = exCycle[i] + subLatency;
+            }
             else if(instructions.get(i).getOpCode() == 4){
-                writeCycle[i] = exCycle[i] + 2;
+                writeCycle[i] = exCycle[i] + loadLatency;
             }
             else if(instructions.get(i).getOpCode() == 5){
-                writeCycle[i] = exCycle[i] + 2;
+                writeCycle[i] = exCycle[i] + storeLatency;
             }
             //Checks for one or more instructions broadcasting at the same time. Multiply and Divide instructions will get precedence over Add and Subtract instructions
             while(WAWdDenendencyCheck == 0){
@@ -835,10 +838,10 @@ static int []memory=new int[1000000];
                         rs5.setQk("   ");
                     }
 
-                    for(int q = 0; q < 8; q++){
+                    for(int q = 0; q < 32; q++){
                         if(RAT.get(q).equals(currentRS)){
                             RegisterFile.set(q,value);
-                            RAT.set(q,"R" + q);
+                            RAT.set(q,"F" + q);
                             break;
                         }
                     }
@@ -878,7 +881,7 @@ static int []memory=new int[1000000];
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
                         sourceOP2 = instructions.get(instrIndexI).getSourceOp2();
                         //If it is pointint to the RegisterFile, then Qj is empty and Vj gets the RegisterFile value
-                        if (RAT.get(sourceOP1).equals("R" + (sourceOP1))) {
+                        if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
                             vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
                             rs1.setVj(vjIntToString);
                             rs1.setQj("   ");
@@ -889,7 +892,7 @@ static int []memory=new int[1000000];
                             rs1.setQj(RAT.get(sourceOP1));
                         }
                         //Same thing as above
-                        if (RAT.get(sourceOP2).equals("R" + (sourceOP2))) {
+                        if (RAT.get(sourceOP2).equals("F" + (sourceOP2))) {
                             System.out.println("hii");
                             vkIntToString = Integer.toString(RegisterFile.get(sourceOP2));
 
@@ -918,7 +921,7 @@ static int []memory=new int[1000000];
                         rs2.setBusy("1");
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
                         sourceOP2 = instructions.get(instrIndexI).getSourceOp2();
-                        if (RAT.get(sourceOP1).equals("R" + (sourceOP1))) {
+                        if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
                             vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
                             rs2.setVj(vjIntToString);
                             rs2.setQj("   ");
@@ -926,7 +929,7 @@ static int []memory=new int[1000000];
                             rs2.setVj("  ");
                             rs2.setQj(RAT.get(sourceOP1));
                         }
-                        if (RAT.get(sourceOP2).equals("R" + (sourceOP2))) {
+                        if (RAT.get(sourceOP2).equals("F" + (sourceOP2))) {
                             vkIntToString = Integer.toString(RegisterFile.get(sourceOP2));
                             rs2.setVk(vkIntToString);
                             rs2.setQk("   ");
@@ -951,7 +954,7 @@ static int []memory=new int[1000000];
                         rs3.setBusy("1");
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
                         sourceOP2 = instructions.get(instrIndexI).getSourceOp2();
-                        if (RAT.get(sourceOP1).equals("R" + (sourceOP1))) {
+                        if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
                             vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
                             rs3.setVj(vjIntToString);
                             rs3.setQj("   ");
@@ -959,7 +962,7 @@ static int []memory=new int[1000000];
                             rs3.setVj("  ");
                             rs3.setQj(RAT.get(sourceOP1));
                         }
-                        if (RAT.get(sourceOP2).equals("R" + (sourceOP2))) {
+                        if (RAT.get(sourceOP2).equals("F" + (sourceOP2))) {
                             vkIntToString = Integer.toString(RegisterFile.get(sourceOP2));
                             rs3.setVk(vkIntToString);
                             rs3.setQk("   ");
@@ -987,7 +990,7 @@ static int []memory=new int[1000000];
                         rs4.setBusy("1");
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
                         sourceOP2 = instructions.get(instrIndexI).getSourceOp2();
-                        if (RAT.get(sourceOP1).equals("R" + (sourceOP1))) {
+                        if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
                             vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
                             rs4.setVj(vjIntToString);
                             rs4.setQj("   ");
@@ -995,7 +998,7 @@ static int []memory=new int[1000000];
                             rs4.setVj("  ");
                             rs4.setQj(RAT.get(sourceOP1));
                         }
-                        if (RAT.get(sourceOP2).equals("R" + (sourceOP2))) {
+                        if (RAT.get(sourceOP2).equals("F" + (sourceOP2))) {
                             vkIntToString = Integer.toString(RegisterFile.get(sourceOP2));
                             rs4.setVk(vkIntToString);
                             rs4.setQk("   ");
@@ -1021,7 +1024,7 @@ static int []memory=new int[1000000];
                         rs5.setBusy("1");
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
                         sourceOP2 = instructions.get(instrIndexI).getSourceOp2();
-                        if (RAT.get(sourceOP1).equals("R" + (sourceOP1))) {
+                        if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
                             vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
                             rs5.setVj(vjIntToString);
                             rs5.setQj("   ");
@@ -1029,7 +1032,7 @@ static int []memory=new int[1000000];
                             rs5.setVj("  ");
                             rs5.setQj(RAT.get(sourceOP1));
                         }
-                        if (RAT.get(sourceOP2).equals("R" + (sourceOP2))) {
+                        if (RAT.get(sourceOP2).equals("F" + (sourceOP2))) {
                             vkIntToString = Integer.toString(RegisterFile.get(sourceOP2));
                             rs5.setVk(vkIntToString);
                             rs5.setQk("   ");
@@ -1092,7 +1095,7 @@ static int []memory=new int[1000000];
                         freeS1 = 0;
                         s1.setBusy(1);
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
-                        if (RAT.get(sourceOP1).equals("R" + (sourceOP1))) {
+                        if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
                             vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
                             s1.setVj(vjIntToString);
                             s1.setQj("   ");
@@ -1107,7 +1110,7 @@ static int []memory=new int[1000000];
                         freeS2 = 0;
                         s2.setBusy(1);
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
-                        if (RAT.get(sourceOP1).equals("R" + (sourceOP1))) {
+                        if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
                             vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
                             s2.setVj(vjIntToString);
                             s2.setQj("   ");
@@ -1122,7 +1125,7 @@ static int []memory=new int[1000000];
                         freeS3 = 0;
                         s3.setBusy(1);
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
-                        if (RAT.get(sourceOP1).equals("R" + (sourceOP1))) {
+                        if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
                             vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
                             s3.setVj(vjIntToString);
                             s3.setQj("   ");
@@ -1136,7 +1139,7 @@ static int []memory=new int[1000000];
                         freeS4 = 0;
                         s4.setBusy(1);
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
-                        if (RAT.get(sourceOP1).equals("R" + (sourceOP1))) {
+                        if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
                             vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
                             s4.setVj(vjIntToString);
                             s4.setQj("   ");
@@ -1150,7 +1153,7 @@ static int []memory=new int[1000000];
                         freeS5 = 0;
                         s5.setBusy(1);
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
-                        if (RAT.get(sourceOP1).equals("R" + (sourceOP1))) {
+                        if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
                             vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
                             s5.setVj(vjIntToString);
                             s5.setQj("   ");
@@ -1440,7 +1443,6 @@ static int []memory=new int[1000000];
                     }
                     //same as above
                     if (currentRS.equals(rs1.getQk())) {
-                        System.out.println("hiiiii");
 
                         rs1.setVk(Integer.toString(value));
                         rs1.setQk("   ");
@@ -1510,11 +1512,11 @@ static int []memory=new int[1000000];
                 //Sets the RAT to point back to the RegisterFile
                 //If its a stale result then it won't update the RAT or RegisterFile
                 //System.out.println(currentRS);
-                for(int q = 0; q < 8; q++){
+                for(int q = 0; q < 32; q++){
 
                     if(RAT.get(q).equals(currentRS)){
                         RegisterFile.set(q, value);
-                        RAT.set(q, "R" + q);
+                        RAT.set(q, "F" + q);
                         break;
                     }
                 }
@@ -1531,6 +1533,7 @@ static int []memory=new int[1000000];
             ReservationStationsToBeStored.add(newRs5);
             RegisterFilesToBeStored.add(RegisterFile);
             Object newRAT=RAT.clone();
+            System.out.println(newRAT);
             RATsToBeStored.add((Vector)newRAT);
             print.printRFRAT(RegisterFile, RAT);
             print.printRS(rs1, rs2, rs3, rs4, rs5);

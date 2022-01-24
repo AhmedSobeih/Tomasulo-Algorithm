@@ -46,7 +46,7 @@ public class GUI implements ActionListener {
         frame = new JFrame();
         BufferedImage myImage = null;
         try {
-            myImage = ImageIO.read(new File("D:\\GUC S7\\Microprocessors\\Project\\src\\tomasulo\\background.png"));
+            myImage = ImageIO.read(new File("./src/tomasulo/background.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -335,7 +335,7 @@ public class GUI implements ActionListener {
                     }
                     inputInstructions.add(line);
                 }
-                Algo.runAlgorithm(inputInstructions,Integer.parseInt(addLatencyText.getText().toString()),Integer.parseInt(mulLatencyText.getText().toString()),Integer.parseInt(divLatencyText.getText().toString()));
+                Algo.runAlgorithm(inputInstructions,Integer.parseInt(addLatencyText.getText().toString()),Integer.parseInt(mulLatencyText.getText().toString()),Integer.parseInt(divLatencyText.getText().toString()),Integer.parseInt(subLatencyText.getText().toString()),Integer.parseInt(loadLatencyText.getText().toString()),Integer.parseInt(storeLatencyText.getText().toString()));
             }
             setRAT();
             setAddRS();
