@@ -18,6 +18,7 @@ public class GUI implements ActionListener {
 
     JFrame frame;
     JButton goCycle = new JButton("Go to cycle");
+    JButton run = new JButton("Run");
     JButton next = new JButton("Next Cycle");
     JButton prev = new JButton("Previous Cycle");
 
@@ -65,7 +66,7 @@ public class GUI implements ActionListener {
 
         panel.setLayout(null);
 
-        error.setBounds(650,150,500,200);
+        error.setBounds(650,120,500,200);
         error.setFont(new Font("Serif", Font.BOLD, 24));
         error.setVisible(false);
         panel.add(error);
@@ -113,6 +114,11 @@ public class GUI implements ActionListener {
         panel.add(storeLatencyText);
 
 
+        run.setBounds(725,250,150,25);
+
+        run.addActionListener(this);
+
+        panel.add(run);
         //next cycle button
         next.setBounds(725,290,150,25);
 
@@ -163,9 +169,9 @@ public class GUI implements ActionListener {
         panel.add(lessInstruction);
 
 
-        int[]instructionQueueBounds = {10,150,470,170};
+        int[]instructionQueueBounds = {10,150,530,200};
         instructionQueue =  drawTable(InstructionColumnNames,1,instructionQueueBounds,"");
-        instructionQueue.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        instructionQueue.setBorder(BorderFactory.createEmptyBorder(0, 10, 80, 0));
 
         System.out.println(instructionQueue.getModel().getValueAt(0, 0));
 
@@ -311,15 +317,12 @@ public class GUI implements ActionListener {
 
     public void getInstructions()
     {
+        instructions=new Vector<>();
         for(int i=0; i<instructionQueue.getModel().getRowCount(); i++)
         {
             String op = (String) instructionQueue.getModel().getValueAt(i, 0);
             if(op.equals(""))
-            {
-                error.setVisible(true);
-                error.setText("Please do not leave empty fields!");
-                return;
-            }
+                break;
             String dest = (String) instructionQueue.getModel().getValueAt(i, 1);
             dest = dest.substring(1,dest.length());
             String j = (String) instructionQueue.getModel().getValueAt(i, 2);
@@ -384,10 +387,42 @@ public class GUI implements ActionListener {
             DefaultTableModel model = (DefaultTableModel) instructionQueue.getModel();
             model.removeRow(model.getRowCount()-1);
         }
+        else if(e.getSource()==run) {
+                getInstructions();
+                try {
+                    int addLatency = Integer.parseInt(addLatencyText.getText().toString());
+                    int mulLatency = Integer.parseInt(mulLatencyText.getText().toString());
+                    int subLatency = Integer.parseInt(subLatencyText.getText().toString());
+                    int divLatency = Integer.parseInt(divLatencyText.getText().toString());
+                    int loadLatency = Integer.parseInt(loadLatencyText.getText().toString());
+                    int storeLatency = Integer.parseInt(storeLatencyText.getText().toString());
+                    if(addLatency<0 || mulLatency<0 || subLatency<0 || divLatency<0 || loadLatency<0 || storeLatency<0)
+                        throw new Exception();
+                    Algo.runAlgorithm(instructions,addLatency,mulLatency,divLatency,subLatency,loadLatency,storeLatency);
+
+                }catch(Exception ex)
+                {
+                    error.setText("Please enter valid latencies!");
+                    error.setVisible(true);
+                }
+
+//                Algo.runAlgorithm(instructions,addLatency,mulLatency,divLatency,subLatency,loadLatency,storeLatency);
+
+            cycles.setText("Cycle: " + 1);
+                cycle=1;
+            setRAT();
+            setAddRS();
+            setMulRS();
+            setRegisterFile();
+            setLoadBuffer();
+            setStoreBuffer();
+            setMemory();
+            clearInstructionQueue();
+            setInstructionQueue();
+            System.out.println("SUIII" + Algo.RATsToBeStored.size());
+        }
         else if(e.getSource()==next)
         {
-
-
             if(cycle==0)
             {
                 getInstructions();
@@ -579,7 +614,7 @@ public class GUI implements ActionListener {
          int[] isCycle = Algo.isCycle;
          int[] exCycle = Algo.exCycle;
          int[] writeCycle=Algo.writeCycle;
-         for(int i=0; i<instructionQueue.getModel().getRowCount(); i++)
+         for(int i=0; i<isCycle.length; i++)
          {
              if(isCycle[i]<=cycle)
                  instructionQueue.getModel().setValueAt(isCycle[i],i,4);

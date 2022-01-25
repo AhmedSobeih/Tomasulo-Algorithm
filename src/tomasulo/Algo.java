@@ -1,18 +1,15 @@
-//Dylan Visto; Julian Thrash
-//The main class that runs the simulation
-
 package tomasulo;
 import java.io.*;
 import java.util.Scanner;
 import java.util.*;
 
 public class Algo {
-//static int addLatency=2;
+    //static int addLatency=2;
 //static int multLatency=10;
 //static int divideLatency=40;
-static Vector <ReservationStation>ReservationStationsToBeStored=new Vector<>();
-static Vector <Vector<Integer>>RegisterFilesToBeStored=new Vector<>();
-static Vector <Vector<String>>RATsToBeStored=new Vector<>();
+    static Vector <ReservationStation>ReservationStationsToBeStored=new Vector<>();
+    static Vector <Vector<Integer>>RegisterFilesToBeStored=new Vector<>();
+    static Vector <Vector<String>>RATsToBeStored=new Vector<>();
 
     static Vector<LoadBuffer> loadBuffers = new Vector<>();
     static Vector<StoreBuffer> storeBuffers = new Vector<>();
@@ -37,6 +34,17 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<>();
 
     public static void runAlgorithm(Vector<String> inputInstructions, int addLatency,int multLatency, int divideLatency,int subLatency,int loadLatency,int storeLatency)
     {
+
+        ReservationStationsToBeStored=new Vector<>();
+        RegisterFilesToBeStored=new Vector<>();
+        RATsToBeStored=new Vector<>();
+
+        loadBuffers = new Vector<>();
+        storeBuffers = new Vector<>();
+
+        memory=new int[1000];
+        memoryVersions = new Vector<>();
+
         memory[0]=3;
         memory[1]=4;
         memory[2]=6;
@@ -364,7 +372,6 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<>();
                     }
                 }
             }
-
             //same thing as above
             else if((instructions.get(i).getOpCode() == 2) || (instructions.get(i).getOpCode() == 3)){
                 for(int p = 0; p < i; p++){
@@ -756,7 +763,6 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<>();
                             if(((!rs7.getVj().equals("  "))  || (!rs7.getVj().equals("   "))) && ((!rs7.getVk().equals("  ")) || (!rs7.getVk().equals("   ")))){
                                 //vj = Integer.parseInt(rs7.getVj());
                                 value = Integer.parseInt(rs7.getVj());;
-
                             }
                         }
                         else if(rs8.getRstoInstructionMatcher() == instructions.get(instrIndexW).getRstoInstructionMatcher()){
@@ -773,7 +779,6 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<>();
                             rs3.setBusy("0");
                             if(((!rs9.getVj().equals("  "))  || (!rs9.getVj().equals("   "))) && ((!rs9.getVk().equals("  ")) || (!rs9.getVk().equals("   ")))){
                                 value = Integer.parseInt(rs9.getVj());
-
                             }
                         }
                     }*/
@@ -846,6 +851,29 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<>();
                     if (rs5.getQk().equals(currentRS)){
                         rs5.setVk(Integer.toString(value));
                         rs5.setQk("   ");
+                    }
+                    if (currentRS.equals(s1.getQj())) {
+                        System.out.println(currentRS);
+                        s1.setVj(Integer.toString(value));
+                        s1.setQj("   ");
+                    }
+                    if (currentRS.equals(s2.getQj())) {
+                        System.out.println(currentRS);
+
+                        s2.setVj(Integer.toString(value));
+                        s2.setQj("   ");
+                    }
+                    if (currentRS.equals(s3.getQj())) {
+                        s3.setVj(Integer.toString(value));
+                        s3.setQj("   ");
+                    }
+                    if (currentRS.equals(s4.getQj())) {
+                        s4.setVj(Integer.toString(value));
+                        s4.setQj("   ");
+                    }
+                    if (currentRS.equals(s5.getQj())) {
+                        s5.setVj(Integer.toString(value));
+                        s5.setQj("   ");
                     }
 
                     for(int q = 0; q < 32; q++){
@@ -1365,42 +1393,44 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<>();
                         rsClear = 11;
                         freeS1 = 1;
                         s1.setBusy(0);
-                        if (((!s1.getVj().equals("  ")) || (!s1.getVj().equals("   ")))) {
+                        if (((!s1.getVj().equals("  ")))) {
                             vj = Integer.parseInt(s1.getVj());
 
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
                     }
-                    if(s2.getAddress() == instructions.get(instrIndexW).getDestOp()){
+                    else if(s2.getAddress() == instructions.get(instrIndexW).getDestOp()){
                         rsClear = 12;
                         freeS2 = 1;
                         s2.setBusy(0);
-                        if (((!s2.getVj().equals("  ")) || (!s2.getVj().equals("   ")))) {
+                        if (((!s2.getVj().equals("  ")) )) {
                             vj = Integer.parseInt(s2.getVj());
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
                     }
-                    if(s3.getAddress() == instructions.get(instrIndexW).getDestOp()){
+                    else if(s3.getAddress() == instructions.get(instrIndexW).getDestOp()){
                         rsClear = 13;
                         freeS3 = 1;
                         s3.setBusy(0);
-                        if (((!s3.getVj().equals("  ")) || (!s3.getVj().equals("   ")))) {
+                        if (((!s3.getVj().equals("  ")))) {
                             vj = Integer.parseInt(s3.getVj());
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
-                    }if(s4.getAddress() == instructions.get(instrIndexW).getDestOp()){
+                    }
+                    else if(s4.getAddress() == instructions.get(instrIndexW).getDestOp()){
                         rsClear = 14;
                         freeS4 = 1;
                         s4.setBusy(0);
-                        if (((!s4.getVj().equals("  ")) || (!s4.getVj().equals("   ")))) {
+                        if (((!s4.getVj().equals("  ")) )) {
                             vj = Integer.parseInt(s4.getVj());
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
-                    }if(s5.getAddress() == instructions.get(instrIndexW).getDestOp()){
+                    }
+                    else if(s5.getAddress() == instructions.get(instrIndexW).getDestOp()){
                         rsClear = 15;
                         freeS5 = 1;
                         s5.setBusy(0);
-                        if (((!s5.getVj().equals("  ")) || (!s5.getVj().equals("   ")))) {
+                        if (((!s5.getVj().equals("  ")) )) {
                             vj = Integer.parseInt(s5.getVj());
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
@@ -1499,10 +1529,13 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<>();
                         rs5.setQk("   ");
                     }
                     if (currentRS.equals(s1.getQj())) {
+                        System.out.println(currentRS);
                         s1.setVj(Integer.toString(value));
                         s1.setQj("   ");
                     }
                     if (currentRS.equals(s2.getQj())) {
+                        System.out.println(currentRS);
+
                         s2.setVj(Integer.toString(value));
                         s2.setQj("   ");
                     }
