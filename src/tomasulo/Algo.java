@@ -1399,7 +1399,7 @@ public class Algo {
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
                     }
-                    else if(s2.getAddress() == instructions.get(instrIndexW).getDestOp()){
+                   else if(s2.getAddress() == instructions.get(instrIndexW).getDestOp()){
                         rsClear = 12;
                         freeS2 = 1;
                         s2.setBusy(0);
@@ -1408,7 +1408,7 @@ public class Algo {
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
                     }
-                    else if(s3.getAddress() == instructions.get(instrIndexW).getDestOp()){
+                   else if(s3.getAddress() == instructions.get(instrIndexW).getDestOp()){
                         rsClear = 13;
                         freeS3 = 1;
                         s3.setBusy(0);
@@ -1417,7 +1417,7 @@ public class Algo {
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
                     }
-                    else if(s4.getAddress() == instructions.get(instrIndexW).getDestOp()){
+                   else if(s4.getAddress() == instructions.get(instrIndexW).getDestOp()){
                         rsClear = 14;
                         freeS4 = 1;
                         s4.setBusy(0);
@@ -1426,7 +1426,7 @@ public class Algo {
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
                     }
-                    else if(s5.getAddress() == instructions.get(instrIndexW).getDestOp()){
+                   else if(s5.getAddress() == instructions.get(instrIndexW).getDestOp()){
                         rsClear = 15;
                         freeS5 = 1;
                         s5.setBusy(0);
