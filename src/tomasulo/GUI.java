@@ -569,8 +569,8 @@ public class GUI implements ActionListener {
         {
             storeBuffer.getModel().setValueAt(storeBuffers.get((cycle-1)*5+i).busy,i,1);
             storeBuffer.getModel().setValueAt(storeBuffers.get((cycle-1)*5+i).address,i,2);
-            storeBuffer.getModel().setValueAt(storeBuffers.get((cycle-1)*5+i).busy,i,3);
-            storeBuffer.getModel().setValueAt(storeBuffers.get((cycle-1)*5+i).address,i,4);
+            storeBuffer.getModel().setValueAt(storeBuffers.get((cycle-1)*5+i).vj,i,3);
+            storeBuffer.getModel().setValueAt(storeBuffers.get((cycle-1)*5+i).qj,i,4);
 
         }
 
