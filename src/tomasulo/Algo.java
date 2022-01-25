@@ -963,6 +963,7 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<>();
                         }
                         rs3.setBusy("1");
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
+                        sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
                         sourceOP2 = instructions.get(instrIndexI).getSourceOp2();
                         if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
                             vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
@@ -1364,7 +1365,7 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<>();
                         rsClear = 11;
                         freeS1 = 1;
                         s1.setBusy(0);
-                        if (((!s1.getVj().equals("  ")) && (!s1.getVj().equals("   ")))) {
+                        if (((!s1.getVj().equals("  ")) || (!s1.getVj().equals("   ")))) {
                             vj = Integer.parseInt(s1.getVj());
 
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
@@ -1374,7 +1375,7 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<>();
                         rsClear = 12;
                         freeS2 = 1;
                         s2.setBusy(0);
-                        if (((!s2.getVj().equals("  ")) && (!s2.getVj().equals("   ")))) {
+                        if (((!s2.getVj().equals("  ")) || (!s2.getVj().equals("   ")))) {
                             vj = Integer.parseInt(s2.getVj());
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
@@ -1383,7 +1384,7 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<>();
                         rsClear = 13;
                         freeS3 = 1;
                         s3.setBusy(0);
-                        if (((!s3.getVj().equals("  ")) && (!s3.getVj().equals("   ")))) {
+                        if (((!s3.getVj().equals("  ")) || (!s3.getVj().equals("   ")))) {
                             vj = Integer.parseInt(s3.getVj());
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
@@ -1391,7 +1392,7 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<>();
                         rsClear = 14;
                         freeS4 = 1;
                         s4.setBusy(0);
-                        if (((!s4.getVj().equals("  ")) && (!s4.getVj().equals("   ")))) {
+                        if (((!s4.getVj().equals("  ")) || (!s4.getVj().equals("   ")))) {
                             vj = Integer.parseInt(s4.getVj());
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
@@ -1399,7 +1400,7 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<>();
                         rsClear = 15;
                         freeS5 = 1;
                         s5.setBusy(0);
-                        if (((!s5.getVj().equals("  ")) && (!s5.getVj().equals("   ")))) {
+                        if (((!s5.getVj().equals("  ")) || (!s5.getVj().equals("   ")))) {
                             vj = Integer.parseInt(s5.getVj());
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
@@ -1409,7 +1410,7 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<>();
                 //Also set the reservation station to be cleared after this cycle
                 //Sets the current reservation station to be open
                 //Also sets Busy to be 0 for the current reservation station
-                if((Opget!=4)&&(Opget!=5)){
+                if((Opget!=4)){
                     if (rs1.getRstoInstructionMatcher() == instructions.get(instrIndexW).getRstoInstructionMatcher()) {
                         currentRS = "RS1";
                         rsClear = 1;
@@ -1509,13 +1510,13 @@ static Vector <Vector<String>>RATsToBeStored=new Vector<>();
                         s3.setVj(Integer.toString(value));
                         s3.setQj("   ");
                     }
-                    if (currentRS.equals(s3.getQj())) {
-                        s3.setVj(Integer.toString(value));
-                        s3.setQj("   ");
+                    if (currentRS.equals(s4.getQj())) {
+                        s4.setVj(Integer.toString(value));
+                        s4.setQj("   ");
                     }
-                    if (currentRS.equals(s3.getQj())) {
-                        s3.setVj(Integer.toString(value));
-                        s3.setQj("   ");
+                    if (currentRS.equals(s5.getQj())) {
+                        s5.setVj(Integer.toString(value));
+                        s5.setQj("   ");
                     }
 
                 }
