@@ -14,8 +14,8 @@ public class Algo {
     static Vector<LoadBuffer> loadBuffers = new Vector<>();
     static Vector<StoreBuffer> storeBuffers = new Vector<>();
 
-    static int []memory=new int[1000];
-    static Vector<int[]> memoryVersions = new Vector<>();
+    static double []memory=new double[1000];
+    static Vector<double[]> memoryVersions = new Vector<>();
     static int[] isCycle;
     static int[] exCycle;
     static int[] writeCycle;
@@ -42,7 +42,7 @@ public class Algo {
         loadBuffers = new Vector<>();
         storeBuffers = new Vector<>();
 
-        memory=new int[1000];
+        memory=new double[1000];
         memoryVersions = new Vector<>();
 
         memory[0]=3;
@@ -58,7 +58,7 @@ public class Algo {
         //This holds the tags or pointers to the RegisterFile(RAT Table)
         Vector<String> RAT = new Vector<String>(32);
         //This array holds all the RegisterFile values
-        Vector<Integer> RegisterFile = new Vector<Integer>(32);
+        Vector<Double> RegisterFile = new Vector<Double>(32);
         //Instructions vector
         Vector<Instruction> instructions = new Vector<Instruction>(10);
         //Cli text file for user to input data
@@ -120,7 +120,7 @@ public class Algo {
         }
         //Making the resitser Table
         for(int j = 0; j < 32; j++){
-            RegisterFile.add(j,0) ;
+            RegisterFile.add(j,0.0) ;
         }
         //making the RAT Table
         for(int k = 0; k < 32; k++){
@@ -183,7 +183,7 @@ public class Algo {
             previousMultiplications = 0;
             previousAdditions = 0;
             go = 1;
-
+            highestRaw=0;
             //-------------------Find isCycle Cycle-------------------//
 
 
@@ -341,6 +341,7 @@ public class Algo {
             //Checks for RAW dependencies between the current instruction and every previous instruction
             for(int c = i-1; c >= 0; c--){
                 if((instructions.get(i).getOpCode()!=4)&&((instructions.get(i).getSourceOp1() == instructions.get(c).getDestOp()) || (instructions.get(i).getSourceOp2() == instructions.get(c).getDestOp()))){
+
                     if((writeCycle[c] != -1) && writeCycle[c] > highestRaw){
                         highestRaw = writeCycle[c];
                     }
@@ -663,11 +664,11 @@ public class Algo {
             //-----------------SPECIAL CASE: BROAMulIssCheckAST CYCLE == isCycle CYCLE-------------------//
             //In this special case, you need to broaMulIssCheckast before you isCycle so that the issuing instruction can capture the values being written to the RegisterFile
             //Check the writeCycle Stage at the bottom of the page to see comments for Writing
-            int vj;
-            int vk;
+            double vj;
+            double vk;
             int Opget = 0;
             int MulIssCheck = 0;
-            int value = 0;
+            double value = 0;
             String currentRS =  "";
             if((instrIndexI != -1) && (instrIndexW != -1)){
                 Opget = instructions.get(instrIndexW).getOpCode();
@@ -679,8 +680,8 @@ public class Algo {
                             rsClear = 4;
                             rs4.setBusy("0");
                             if(((!rs4.getVj().equals("  "))  || (!rs4.getVj().equals("   "))) && ((!rs4.getVk().equals("  ")) || (!rs4.getVk().equals("   ")))){
-                                vj = Integer.parseInt(rs4.getVj());
-                                vk = Integer.parseInt(rs4.getVk());
+                                vj = Double.parseDouble(rs4.getVj());
+                                vk = Double.parseDouble(rs4.getVk());
                                 if(Opget == 2){
                                     value = vj * vk;
                                 }
@@ -694,8 +695,8 @@ public class Algo {
                             rsClear = 5;
                             rs5.setBusy("0");
                             if(((!rs5.getVj().equals("  "))  || (!rs5.getVj().equals("   "))) && ((!rs5.getVk().equals("  ")) || (!rs5.getVk().equals("   ")))){
-                                vj = Integer.parseInt(rs5.getVj());
-                                vk = Integer.parseInt(rs5.getVk());
+                                vj =Double.parseDouble(rs5.getVj());
+                                vk = Double.parseDouble(rs5.getVk());
                                 if(Opget == 2){
                                     value = vj * vk;
                                 }
@@ -712,9 +713,9 @@ public class Algo {
                             rsClear = 1;
                             rs1.setBusy("0");
                             if(((!rs1.getVj().equals("  "))  || (!rs1.getVj().equals("   "))) && ((!rs1.getVk().equals("  ")) || (!rs1.getVk().equals("   ")))){
-                                vj = Integer.parseInt(rs1.getVj());
+                                vj = Double.parseDouble(rs1.getVj());
                                 System.out.println(vj);
-                                vk = Integer.parseInt(rs1.getVk());
+                                vk = Double.parseDouble(rs1.getVk());
                                 System.out.println(vk);
                                 if(Opget == 0){
                                     value = vj + vk;
@@ -729,8 +730,8 @@ public class Algo {
                             rsClear = 2;
                             rs2.setBusy("0");
                             if(((!rs2.getVj().equals("  "))  || (!rs2.getVj().equals("   "))) && ((!rs2.getVk().equals("  ")) || (!rs2.getVk().equals("   ")))){
-                                vj = Integer.parseInt(rs2.getVj());
-                                vk = Integer.parseInt(rs2.getVk());
+                                vj = Double.parseDouble(rs2.getVj());
+                                vk = Double.parseDouble(rs2.getVk());
                                 if(Opget == 0){
                                     value = vj + vk;
                                 }
@@ -744,8 +745,8 @@ public class Algo {
                             rsClear = 3;
                             rs3.setBusy("0");
                             if(((!rs3.getVj().equals("  "))  || (!rs3.getVj().equals("   "))) && ((!rs3.getVk().equals("  ")) || (!rs3.getVk().equals("   ")))){
-                                vj = Integer.parseInt(rs3.getVj());
-                                vk = Integer.parseInt(rs3.getVk());
+                                vj = Double.parseDouble(rs3.getVj());
+                                vk = Double.parseDouble(rs3.getVk());
                                 if(Opget == 0){
                                     value = vj + vk;
                                 }
@@ -811,68 +812,68 @@ public class Algo {
                     }
               */
                     if( rs1.getQj().equals(currentRS)){
-                        rs1.setVj(Integer.toString(value));
+                        rs1.setVj(Double.toString(value));
                         rs1.setQj("   ");
                     }
                     if (rs1.getQk().equals(currentRS)){
                         System.out.println("hi");
 
-                        rs1.setVk(Integer.toString(value));
+                        rs1.setVk(Double.toString(value));
                         rs1.setQk("   ");
                     }
                     if (rs2.getQj().equals(currentRS)){
-                        rs2.setVj(Integer.toString(value));
+                        rs2.setVj(Double.toString(value));
                         rs2.setQj("   ");
                     }
                     if (rs2.getQk().equals(currentRS)){
-                        rs2.setVk(Integer.toString(value));
+                        rs2.setVk(Double.toString(value));
                         rs2.setQk("   ");
                     }
                     if (rs3.getQj().equals(currentRS)){
-                        rs3.setVj(Integer.toString(value));
+                        rs3.setVj(Double.toString(value));
                         rs3.setQj("   ");
                     }
                     if (rs3.getQk().equals(currentRS)){
-                        rs3.setVk(Integer.toString(value));
+                        rs3.setVk(Double.toString(value));
                         rs3.setQk("   ");
                     }
                     if (rs4.getQj().equals(currentRS)){
-                        rs4.setVj(Integer.toString(value));
+                        rs4.setVj(Double.toString(value));
                         rs4.setQj("   ");
                     }
                     if (rs4.getQk().equals(currentRS)){
-                        rs4.setVk(Integer.toString(value));
+                        rs4.setVk(Double.toString(value));
                         rs4.setQk("   ");
                     }
                     if (rs5.getQj().equals(currentRS)){
-                        rs5.setVj(Integer.toString(value));
+                        rs5.setVj(Double.toString(value));
                         rs5.setQj("   ");
                     }
                     if (rs5.getQk().equals(currentRS)){
-                        rs5.setVk(Integer.toString(value));
+                        rs5.setVk(Double.toString(value));
                         rs5.setQk("   ");
                     }
                     if (currentRS.equals(s1.getQj())) {
                         System.out.println(currentRS);
-                        s1.setVj(Integer.toString(value));
+                        s1.setVj(Double.toString(value));
                         s1.setQj("   ");
                     }
                     if (currentRS.equals(s2.getQj())) {
                         System.out.println(currentRS);
 
-                        s2.setVj(Integer.toString(value));
+                        s2.setVj(Double.toString(value));
                         s2.setQj("   ");
                     }
                     if (currentRS.equals(s3.getQj())) {
-                        s3.setVj(Integer.toString(value));
+                        s3.setVj(Double.toString(value));
                         s3.setQj("   ");
                     }
                     if (currentRS.equals(s4.getQj())) {
-                        s4.setVj(Integer.toString(value));
+                        s4.setVj(Double.toString(value));
                         s4.setQj("   ");
                     }
                     if (currentRS.equals(s5.getQj())) {
-                        s5.setVj(Integer.toString(value));
+                        s5.setVj(Double.toString(value));
                         s5.setQj("   ");
                     }
 
@@ -920,7 +921,7 @@ public class Algo {
                         sourceOP2 = instructions.get(instrIndexI).getSourceOp2();
                         //If it is pointint to the RegisterFile, then Qj is empty and Vj gets the RegisterFile value
                         if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
-                            vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
+                            vjIntToString = Double.toString(RegisterFile.get(sourceOP1));
                             rs1.setVj(vjIntToString);
                             rs1.setQj("   ");
                         }
@@ -932,7 +933,7 @@ public class Algo {
                         //Same thing as above
                         if (RAT.get(sourceOP2).equals("F" + (sourceOP2))) {
                             System.out.println("hii");
-                            vkIntToString = Integer.toString(RegisterFile.get(sourceOP2));
+                            vkIntToString = Double.toString(RegisterFile.get(sourceOP2));
 
                             rs1.setVk(vkIntToString);
                             rs1.setQk("   ");
@@ -960,7 +961,7 @@ public class Algo {
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
                         sourceOP2 = instructions.get(instrIndexI).getSourceOp2();
                         if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
-                            vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
+                            vjIntToString = Double.toString(RegisterFile.get(sourceOP1));
                             rs2.setVj(vjIntToString);
                             rs2.setQj("   ");
                         } else {
@@ -968,7 +969,7 @@ public class Algo {
                             rs2.setQj(RAT.get(sourceOP1));
                         }
                         if (RAT.get(sourceOP2).equals("F" + (sourceOP2))) {
-                            vkIntToString = Integer.toString(RegisterFile.get(sourceOP2));
+                            vkIntToString = Double.toString(RegisterFile.get(sourceOP2));
                             rs2.setVk(vkIntToString);
                             rs2.setQk("   ");
                         } else {
@@ -994,7 +995,7 @@ public class Algo {
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
                         sourceOP2 = instructions.get(instrIndexI).getSourceOp2();
                         if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
-                            vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
+                            vjIntToString = Double.toString(RegisterFile.get(sourceOP1));
                             rs3.setVj(vjIntToString);
                             rs3.setQj("   ");
                         } else {
@@ -1002,7 +1003,7 @@ public class Algo {
                             rs3.setQj(RAT.get(sourceOP1));
                         }
                         if (RAT.get(sourceOP2).equals("F" + (sourceOP2))) {
-                            vkIntToString = Integer.toString(RegisterFile.get(sourceOP2));
+                            vkIntToString = Double.toString(RegisterFile.get(sourceOP2));
                             rs3.setVk(vkIntToString);
                             rs3.setQk("   ");
                         } else {
@@ -1030,7 +1031,7 @@ public class Algo {
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
                         sourceOP2 = instructions.get(instrIndexI).getSourceOp2();
                         if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
-                            vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
+                            vjIntToString = Double.toString(RegisterFile.get(sourceOP1));
                             rs4.setVj(vjIntToString);
                             rs4.setQj("   ");
                         } else {
@@ -1038,7 +1039,7 @@ public class Algo {
                             rs4.setQj(RAT.get(sourceOP1));
                         }
                         if (RAT.get(sourceOP2).equals("F" + (sourceOP2))) {
-                            vkIntToString = Integer.toString(RegisterFile.get(sourceOP2));
+                            vkIntToString = Double.toString(RegisterFile.get(sourceOP2));
                             rs4.setVk(vkIntToString);
                             rs4.setQk("   ");
                         } else {
@@ -1064,7 +1065,7 @@ public class Algo {
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
                         sourceOP2 = instructions.get(instrIndexI).getSourceOp2();
                         if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
-                            vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
+                            vjIntToString = Double.toString(RegisterFile.get(sourceOP1));
                             rs5.setVj(vjIntToString);
                             rs5.setQj("   ");
                         } else {
@@ -1072,7 +1073,7 @@ public class Algo {
                             rs5.setQj(RAT.get(sourceOP1));
                         }
                         if (RAT.get(sourceOP2).equals("F" + (sourceOP2))) {
-                            vkIntToString = Integer.toString(RegisterFile.get(sourceOP2));
+                            vkIntToString = Double.toString(RegisterFile.get(sourceOP2));
                             rs5.setVk(vkIntToString);
                             rs5.setQk("   ");
                         } else {
@@ -1135,7 +1136,7 @@ public class Algo {
                         s1.setBusy(1);
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
                         if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
-                            vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
+                            vjIntToString = Double.toString(RegisterFile.get(sourceOP1));
                             s1.setVj(vjIntToString);
                             s1.setQj("   ");
                         } else {
@@ -1150,7 +1151,7 @@ public class Algo {
                         s2.setBusy(1);
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
                         if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
-                            vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
+                            vjIntToString = Double.toString(RegisterFile.get(sourceOP1));
                             s2.setVj(vjIntToString);
                             s2.setQj("   ");
                         } else {
@@ -1165,7 +1166,7 @@ public class Algo {
                         s3.setBusy(1);
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
                         if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
-                            vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
+                            vjIntToString = Double.toString(RegisterFile.get(sourceOP1));
                             s3.setVj(vjIntToString);
                             s3.setQj("   ");
                         } else {
@@ -1179,7 +1180,7 @@ public class Algo {
                         s4.setBusy(1);
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
                         if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
-                            vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
+                            vjIntToString = Double.toString(RegisterFile.get(sourceOP1));
                             s4.setVj(vjIntToString);
                             s4.setQj("   ");
                         } else {
@@ -1193,7 +1194,7 @@ public class Algo {
                         s5.setBusy(1);
                         sourceOP1 = instructions.get(instrIndexI).getSourceOp1();
                         if (RAT.get(sourceOP1).equals("F" + (sourceOP1))) {
-                            vjIntToString = Integer.toString(RegisterFile.get(sourceOP1));
+                            vjIntToString = Double.toString(RegisterFile.get(sourceOP1));
                             s5.setVj(vjIntToString);
                             s5.setQj("   ");
                         } else {
@@ -1288,8 +1289,8 @@ public class Algo {
                         //If the vj and vk values are not empty then enter
                         if(((!rs1.getVj().equals("  "))  || (!rs1.getVj().equals("   "))) && ((!rs1.getVk().equals("  ")) || (!rs1.getVk().equals("   ")))){
                             //evaluates the vj and vk values depending on the opcode
-                            vj = Integer.parseInt(rs1.getVj());
-                            vk = Integer.parseInt(rs1.getVk());
+                            vj = Double.parseDouble(rs1.getVj());
+                            vk = Double.parseDouble(rs1.getVk());
                             if(Opget == 0){
                                 value = vj + vk;
                             }
@@ -1301,8 +1302,8 @@ public class Algo {
                     //same as above
                     else if(rs2.getRstoInstructionMatcher() == instructions.get(instrIndexW).getRstoInstructionMatcher()){
                         if(((!rs2.getVj().equals("  "))  || (!rs2.getVj().equals("   "))) && ((!rs2.getVk().equals("  ")) || (!rs2.getVk().equals("   ")))){
-                            vj = Integer.parseInt(rs2.getVj());
-                            vk = Integer.parseInt(rs2.getVk());
+                            vj = Double.parseDouble(rs2.getVj());
+                            vk = Double.parseDouble(rs2.getVk());
                             if(Opget == 0){
                                 value = vj + vk;
                             }
@@ -1314,8 +1315,8 @@ public class Algo {
                     //same as above
                     else if(rs3.getRstoInstructionMatcher() == instructions.get(instrIndexW).getRstoInstructionMatcher()){
                         if(((!rs3.getVj().equals("  "))  || (!rs3.getVj().equals("   "))) && ((!rs3.getVk().equals("  ")) || (!rs3.getVk().equals("   ")))){
-                            vj = Integer.parseInt(rs3.getVj());
-                            vk = Integer.parseInt(rs3.getVk());
+                            vj = Double.parseDouble(rs3.getVj());
+                            vk = Double.parseDouble(rs3.getVk());
                             if(Opget == 0){
                                 value = vj + vk;
                             }
@@ -1329,8 +1330,8 @@ public class Algo {
                 else if(Opget == 2 || Opget == 3){
                     if(rs4.getRstoInstructionMatcher() == instructions.get(instrIndexW).getRstoInstructionMatcher()){
                         if(((!rs4.getVj().equals("  "))  || (!rs4.getVj().equals("   "))) && ((!rs4.getVk().equals("  ")) || (!rs4.getVk().equals("   ")))){
-                            vj = Integer.parseInt(rs4.getVj());
-                            vk = Integer.parseInt(rs4.getVk());
+                            vj = Double.parseDouble(rs4.getVj());
+                            vk = Double.parseDouble(rs4.getVk());
                             if(Opget == 2){
                                 value = vj * vk;
                             }
@@ -1341,8 +1342,8 @@ public class Algo {
                     }
                     else if(rs5.getRstoInstructionMatcher() == instructions.get(instrIndexW).getRstoInstructionMatcher()){
                         if(((!rs5.getVj().equals("  "))  || (!rs5.getVj().equals("   "))) && ((!rs5.getVk().equals("  ")) || (!rs5.getVk().equals("   ")))){
-                            vj = Integer.parseInt(rs5.getVj());
-                            vk = Integer.parseInt(rs5.getVk());
+                            vj = Double.parseDouble(rs5.getVj());
+                            vk = Double.parseDouble(rs5.getVk());
                             if(Opget == 2){
                                 value = vj * vk;
                             }
@@ -1394,7 +1395,7 @@ public class Algo {
                         freeS1 = 1;
                         s1.setBusy(0);
                         if (((!s1.getVj().equals("  ")))) {
-                            vj = Integer.parseInt(s1.getVj());
+                            vj = Double.parseDouble(s1.getVj());
 
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
@@ -1404,7 +1405,7 @@ public class Algo {
                         freeS2 = 1;
                         s2.setBusy(0);
                         if (((!s2.getVj().equals("  ")) )) {
-                            vj = Integer.parseInt(s2.getVj());
+                            vj = Double.parseDouble(s2.getVj());
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
                     }
@@ -1413,7 +1414,7 @@ public class Algo {
                         freeS3 = 1;
                         s3.setBusy(0);
                         if (((!s3.getVj().equals("  ")))) {
-                            vj = Integer.parseInt(s3.getVj());
+                            vj = Double.parseDouble(s3.getVj());
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
                     }
@@ -1422,7 +1423,7 @@ public class Algo {
                         freeS4 = 1;
                         s4.setBusy(0);
                         if (((!s4.getVj().equals("  ")) )) {
-                            vj = Integer.parseInt(s4.getVj());
+                            vj = Double.parseDouble(s4.getVj());
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
                     }
@@ -1431,7 +1432,7 @@ public class Algo {
                         freeS5 = 1;
                         s5.setBusy(0);
                         if (((!s5.getVj().equals("  ")) )) {
-                            vj = Integer.parseInt(s5.getVj());
+                            vj = Double.parseDouble(s5.getVj());
                             memory[instructions.get(instrIndexW).getDestOp()]=vj;
                         }
                     }
@@ -1479,76 +1480,76 @@ public class Algo {
                 //Checks all the Qj and Qk fields to see if Vj or Vk need to be updated this cycle
                 if(Opget!=5) {
                     if (currentRS.equals(rs1.getQj())) {
-                        rs1.setVj(Integer.toString(value));
+                        rs1.setVj(Double.toString(value));
                         rs1.setQj("   ");
                     }
                     //same as above
                     if (currentRS.equals(rs1.getQk())) {
 
-                        rs1.setVk(Integer.toString(value));
+                        rs1.setVk(Double.toString(value));
                         rs1.setQk("   ");
                     }
                     //same as above
                     if (currentRS.equals(rs2.getQj())) {
-                        rs2.setVj(Integer.toString(value));
+                        rs2.setVj(Double.toString(value));
                         rs2.setQj("   ");
                     }
                     //same as above
                     if (currentRS.equals(rs2.getQk())) {
-                        rs2.setVk(Integer.toString(value));
+                        rs2.setVk(Double.toString(value));
                         rs2.setQk("   ");
                     }
                     //same as above
                     if (currentRS.equals(rs3.getQj())) {
-                        rs3.setVj(Integer.toString(value));
+                        rs3.setVj(Double.toString(value));
                         rs3.setQj("   ");
                     }
                     //same as above
                     if (currentRS.equals(rs3.getQk())) {
-                        rs3.setVk(Integer.toString(value));
+                        rs3.setVk(Double.toString(value));
                         rs3.setQk("   ");
                     }
                     //same as above
                     if (currentRS.equals(rs4.getQj())) {
-                        rs4.setVj(Integer.toString(value));
+                        rs4.setVj(Double.toString(value));
                         rs4.setQj("   ");
                     }
                     //same as above
                     if (currentRS.equals(rs4.getQk())) {
-                        rs4.setVk(Integer.toString(value));
+                        rs4.setVk(Double.toString(value));
                         rs4.setQk("   ");
                     }
                     //same as above
                     if (currentRS.equals(rs5.getQj())) {
-                        rs5.setVj(Integer.toString(value));
+                        rs5.setVj(Double.toString(value));
                         rs5.setQj("   ");
                     }
                     //same as above
                     if (currentRS.equals(rs5.getQk())) {
-                        rs5.setVk(Integer.toString(value));
+                        rs5.setVk(Double.toString(value));
                         rs5.setQk("   ");
                     }
                     if (currentRS.equals(s1.getQj())) {
                         System.out.println(currentRS);
-                        s1.setVj(Integer.toString(value));
+                        s1.setVj(Double.toString(value));
                         s1.setQj("   ");
                     }
                     if (currentRS.equals(s2.getQj())) {
                         System.out.println(currentRS);
 
-                        s2.setVj(Integer.toString(value));
+                        s2.setVj(Double.toString(value));
                         s2.setQj("   ");
                     }
                     if (currentRS.equals(s3.getQj())) {
-                        s3.setVj(Integer.toString(value));
+                        s3.setVj(Double.toString(value));
                         s3.setQj("   ");
                     }
                     if (currentRS.equals(s4.getQj())) {
-                        s4.setVj(Integer.toString(value));
+                        s4.setVj(Double.toString(value));
                         s4.setQj("   ");
                     }
                     if (currentRS.equals(s5.getQj())) {
-                        s5.setVj(Integer.toString(value));
+                        s5.setVj(Double.toString(value));
                         s5.setQj("   ");
                     }
 
@@ -1605,9 +1606,9 @@ public class Algo {
             print.printRFRAT(RegisterFile, RAT);
             print.printRS(rs1, rs2, rs3, rs4, rs5);
             Object newMemory = memory.clone();
-            System.out.println(Arrays.toString((int[])newMemory));
+            System.out.println(Arrays.toString((double[])newMemory));
 
-            memoryVersions.add((int[]) newMemory);
+            memoryVersions.add((double[]) newMemory);
 
         }
         //printing functions that display the RegisterFile, RAT, and Reservation Stations for each cycle

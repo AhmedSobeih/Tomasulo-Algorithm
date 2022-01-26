@@ -261,8 +261,8 @@ public class GUI implements ActionListener {
             switch (stationType)
             {
                 case "": tableData[i][0]= ""; break;
-                case "A": tableData[i][0]= "RS"+i; break;
-                case "M": tableData[i][0]= "RS"+(i+3); break;
+                case "A": tableData[i][0]= "RS"+(i+1); break;
+                case "M": tableData[i][0]= "RS"+(i+4); break;
                 case "L": tableData[i][0]= "L"+(i); break;
                 case "S": tableData[i][0]= "S"+(i); break;
                 case "Mem": tableData[i][0]= i+""; break;
@@ -326,7 +326,6 @@ public class GUI implements ActionListener {
             String dest = (String) instructionQueue.getModel().getValueAt(i, 1);
             dest = dest.substring(1,dest.length());
             String j = (String) instructionQueue.getModel().getValueAt(i, 2);
-            System.out.println("SSSSSSS"+ j);
             String k = "";
             if(!op.equals("L.D") && !op.equals("S.D"))
             {
@@ -626,7 +625,7 @@ public class GUI implements ActionListener {
     }
     public void setMemory()
     {
-        int []memory = Algo.memoryVersions.get(cycle-1);
+        double []memory = Algo.memoryVersions.get(cycle-1);
         System.out.println("HHHHHH"+ memory[cycle-1]);
         for(int i=0; i<this.memory.getModel().getRowCount(); i++)
         {

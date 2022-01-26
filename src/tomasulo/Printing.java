@@ -61,7 +61,7 @@ public class Printing {
 
 
     //Function to print the RF and RAT
-    public void printRFRAT(Vector<Integer> RF, Vector<String> RAT){
+    public void printRFRAT(Vector<Double> RF, Vector<String> RAT){
 
         System.out.println("   RF                   RAT");
         System.out.println("-----------------------------");
